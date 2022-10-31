@@ -1,0 +1,41 @@
+{
+    "index_patterns": "temperature*",
+    "template": {
+        "settings": {
+            "number_of_shards": 1,
+            "index": {
+                "routing": {
+                    "allocation": {
+                        "include": {
+                            "_tier_preference": "data_content"
+                        }
+                    }
+                }
+            }
+        },
+        "mappings": {
+            "_source": {
+                "enabled": true
+            },
+            "properties": {
+                "country": {
+                    "type": "text"
+                },
+                "id": {
+                    "type": "integer",
+                    "ignore_malformed": false,
+                    "coerce": true
+                },
+                "identification": {
+                    "type": "text"
+                },
+                "location": {
+                    "type": "geo_point"
+                },
+                "temp": {
+                    "type": "float"
+                }
+            }
+        }
+    }
+}

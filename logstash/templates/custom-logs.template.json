@@ -1,0 +1,34 @@
+{
+    "template": "custom-logs",
+    "index_patterns": [
+        "custom-logs-*"
+    ],
+    "settings": {
+        "number_of_shards": 1
+    },
+    "mappings": {
+        "properties": {
+            "@version": {
+                "type": "integer"
+            },
+            "message": {
+                "type": "keyword"
+            },
+            "logger_name": {
+                "type": "keyword"
+            },
+            "thread_name": {
+                "type": "keyword"
+            },
+            "level": {
+                "type": "keyword"
+            },
+            "level_value": {
+                "type": "integer"
+            },
+            "@timestamp": {
+                "type": "date"
+            }
+        }
+    }
+}

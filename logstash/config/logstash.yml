@@ -1,0 +1,11 @@
+http.host: "0.0.0.0"
+
+config.reload.automatic: true
+
+## X-Pack security credentials
+xpack.monitoring.elasticsearch.hosts: ["https://elasticsearch:9200"]
+xpack.monitoring.enabled: true
+xpack.monitoring.elasticsearch.username: logstash_system
+xpack.monitoring.elasticsearch.password: nzN6XzhbVlBp*8ygX6_y
+xpack.monitoring.elasticsearch.ssl.certificate_authority: /etc/logstash/es-ca.crt
+xpack.monitoring.elasticsearch.ssl.verification_mode: certificate

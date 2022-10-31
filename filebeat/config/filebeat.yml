@@ -1,0 +1,35 @@
+name: filebeat-docker-logs-shipper
+
+logging.level: info
+
+filebeat.config.inputs:
+  path: /usr/share/filebeat/filebeat.yml
+  reload.enabled: true
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /usr/share/filebeat/logs/app/*.log
+  scan_frequency: 5s
+
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl.enabled: true
+  # List of root certificates for HTTPS server verifications
+  ssl.certificate_authorities: ["/etc/logstash/es-ca.crt"]
+  # Certificate for SSL client authentication
+  ssl.certificate: "/etc/logstash/logstash.crt"
+  # Client Certificate Key
+  ssl.key: "/etc/logstash/logstash.pkcs8.key"
+  ssl.verification_mode: certificate
+
+processors:
+  - add_docker_metadata:
+      host: "unix:///host_docker/docker.sock"
+
+# Defines if the HTTP endpoint is enabled.
+http.enabled: true
+http.host: 0.0.0.0
+http.port: 5066
+

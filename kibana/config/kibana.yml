@@ -1,0 +1,29 @@
+server.name: kibana
+server.host: "0.0.0.0"
+
+# Elasticsearch Connection
+elasticsearch.hosts: [ "https://elasticsearch:9200" ]
+elasticsearch.username: kibana
+elasticsearch.password: AWRRW8KYIR5Ytd2wZs9P
+xpack.reporting.kibanaServer.hostname: localhost
+
+# SSL settings
+server.ssl.enabled: true
+server.ssl.certificate: /etc/kibana/instance.crt
+server.ssl.key: /etc/kibana/instance.key
+elasticsearch.ssl.verificationMode: none
+# xpack.security.encryptionKey: C1tHnfrlfxSPxPlQ8BlgPB5qMNRtg5V5
+# server.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
+# xpack.encryptedSavedObjects.encryptionKey: D12GTfrlfxSPxPlGRBlgPB5qM5GOPDV5
+# xpack.reporting.encryptionKey: RSCueeHKzrqzOVTJhkjt17EMnzM96LlN
+
+## X-Pack security credentials
+# elasticsearch.serviceAccountToken: "${KIBANA_SERVICE_ACCOUNT_TOKEN}"
+# elasticsearch.ssl.certificateAuthorities: [ "/certs/ca.crt" ]
+
+## Misc
+elasticsearch.requestTimeout: 90000
+
+## ElastAlert Plugin
+#elastalert-kibana-plugin.serverHost: elastalert
+#elastalert-kibana-plugin.serverPort: 3030

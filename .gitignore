@@ -1,0 +1,5 @@
+*.zip
+*.p12
+*.crt
+*.key
+*.pem

@@ -1,0 +1,124 @@
+version: '3.7'
+services:
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:8.4.3
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    stdin_open: true
+    tty: true
+    network_mode: bridge
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elastic-certificates.p12:/usr/share/elasticsearch/config/elastic-certificates.p12
+      - /Users/julian.henao.marin/Documents/Personal/Charlas/elasticsearch/data:/usr/share/elasticsearch/data
+  kibana:
+    container_name: kibana
+    image: kibana:8.4.3
+    environment:
+      - monitoring.enabled=false
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+    stdin_open: true
+    tty: true
+    network_mode: bridge
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./kibana/instance.crt:/etc/kibana/instance.crt
+      - ./kibana/instance.key:/etc/kibana/instance.key
+  logstash:
+    container_name: logstash
+    image: logstash:8.4.3
+    environment:
+      - "LS_JAVA_OPTS: -Xm1g -Xms1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      # - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./es-ca.crt:/etc/logstash/es-ca.crt
+      - ./logstash.pem:/etc/logstash/logstash.pem
+      - ./logstash.crt:/etc/logstash/logstash.crt
+      - ./logstash.pkcs8.key:/etc/logstash/logstash.pkcs8.key
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/templates:/usr/share/logstash/templates
+      - ./logstash/lib/postgresql-42.5.0.jar:/usr/share/logstash/logstash-core/lib/jars/postgresql-42.5.0.jar
+    ports:
+      - 5044:5044
+      - 5045:5045
+    links:
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+    stdin_open: true
+    tty: true
+    network_mode: bridge
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+  filebeat:
+    user: root
+    container_name: filebeat
+    image: docker.elastic.co/beats/filebeat:8.4.3
+    ports:
+      - 5066:5066
+    links:
+      - logstash:logstash
+    depends_on:
+      - logstash
+    volumes:
+      - /var/run/docker.sock:/host_docker/docker.sock
+      - /var/lib/docker:/host_docker/var/lib/docker
+      - /Users/julian.henao.marin/Documents/Personal/Charlas/logs/app:/usr/share/filebeat/logs/app
+      - ./es-ca.crt:/etc/logstash/es-ca.crt
+      - ./logstash.crt:/etc/logstash/logstash.crt
+      - ./logstash.pkcs8.key:/etc/logstash/logstash.pkcs8.key
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    command: ["--strict.perms=false"]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    stdin_open: true
+    tty: true
+    network_mode: bridge
+    deploy:
+      mode: global
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
