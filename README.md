@@ -116,3 +116,12 @@ http://localhost:5066/?pretty
 - [x] runing all the stack
 - [x] reading data from log file
 - [x] reading data from postgresql
+
+# License
+
+[MIT License](https://raw.githubusercontent.com/julianhm9612/docker-elk-stack/master/LICENSE)
+Copyright (c) 2023 Julian Henao Marin
+
+# Contribution
+
+PR(s) are Open and Welcomed.
